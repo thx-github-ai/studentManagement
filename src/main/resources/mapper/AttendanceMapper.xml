@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.demo.qcby.mapper.AttendanceMapper">
+    <update id="studentSignIn">
+        update student_lesson_attendance
+        set status = #{status}, update_time = #{updateTime}
+        where student_user_id = #{studentUserId} and lesson_id = #{lessonId}
+
+    </update>
+
+
+    <select id="listAllAttendance" resultType="com.demo.qcby.entity.StudentLessonAttendance">
+        select distinct student_lesson_attendance.id, student_lesson.subject, dic_class_info.class_name,
+        student_lesson_attendance.status, sys_user.user_name, student_lesson_attendance.create_time
+        from student_lesson_attendance, student_lesson, ref_class_teacher, dic_class_info, sys_user
+        <where>
+            1 = 1
+            <if test="studentUserName != null">
+                and student_user_id in (
+                    select id
+                    from sys_user
+                    where user_name like concat('%', #{studentUserName}, '%')
+                )
+            </if>
+            <if test="className != null">
+                and student_lesson_attendance.class_id in (
+                    select id
+                    from dic_class_info
+                    where class_name like concat('%', #{className}, '%')
+                )
+            </if>
+            <if test="teacherUserName != null">
+                and student_lesson_attendance.teacher_user_id in (
+                    select id
+                    from sys_user
+                    where user_name like concat('%', #{teacherUserName}, '%')
+                )
+            </if>
+            <if test="lessonName != null">
+                and student_lesson_attendance.lesson_id in (
+                    select id
+                    from student_lesson
+                    where subject like concat('%', #{lessonName}, '%')
+                )
+            </if>
+            <if test="status != null">
+                and student_lesson_attendance.status = #{status}
+            </if>
+            <if test="userId != null">
+                and student_user_id = #{userId}
+            </if>
+            and student_lesson_attendance.class_id = dic_class_info.id
+            and student_lesson_attendance.student_user_id = sys_user.id
+            and student_lesson_attendance.lesson_id = student_lesson.id
+        </where>
+    </select>
+</mapper>

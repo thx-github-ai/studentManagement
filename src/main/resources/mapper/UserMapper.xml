@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.demo.qcby.mapper.UserMapper">
+    <insert id="insertDefaultRole">
+        insert into ref_user_role
+        value (#{id}, 1)
+    </insert>
+    <update id="updateRole">
+        update ref_user_role
+        set role_id = #{roleId}
+        where user_id = #{userId}
+    </update>
+    <delete id="deleteUser">
+        delete from sys_user
+        <where>
+            id in
+            <foreach collection="idList" open="(" separator="," close=")" index="index" item="item">
+                #{item}
+            </foreach>
+        </where>
+    </delete>
+
+    <select id="listAll" resultType="com.demo.qcby.entity.SysUser">
+        select *
+        from sys_user
+        <where>
+            1 = 1
+            <if test="realName != null">
+                and real_name like concat('%', #{realName},'%')
+            </if>
+            <if test="sex != null">
+                and sex = #{sex}
+            </if>
+            <if test="admissionDate != null">
+                and admission_date like concat('%', #{admissionDate},'%')
+            </if>
+            <if test="className != null">
+                and student_class_id = (select id from dic_class_info where class_name like concat('%', #{className},'%'))
+            </if>
+            <if test="instituteName != null">
+                and institute_id = (select id from dic_institute_info where institute_name like concat('%', #{instituteName},'%'))
+            </if>
+            <if test="majorName != null">
+                and major_id = (select id from dic_major_info where major_name like concat('%', #{majorName},'%'))
+            </if>
+        </where>
+    </select>
+</mapper>

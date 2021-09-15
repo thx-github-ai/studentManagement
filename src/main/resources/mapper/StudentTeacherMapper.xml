@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.demo.qcby.mapper.StudentTeacherMapper">
+    <insert id="insertClass">
+        insert into ref_class_teacher
+        values
+        <foreach collection="classIdList" item="classId" separator=",">
+        (#{classId}, #{teacherId})
+        </foreach>
+    </insert>
+    <insert id="insertRole">
+        insert into ref_user_role
+        values(#{userId}, #{roleId})
+    </insert>
+
+    <delete id="deleteAll">
+        delete
+        from sys_user
+        where id in
+        <foreach collection="idList" separator="," close=")" open="(" item="item" index="index">
+            #{item}
+        </foreach>
+    </delete>
+    <delete id="deleteTc">
+        delete
+        from ref_class_teacher
+        where teacher_user_id = #{teacherId}
+    </delete>
+
+    <select id="listAll" resultType="com.demo.qcby.entity.SysUser">
+        select *
+        from sys_user
+        <where>
+            1 = 1
+            <if test="userName != null">
+                and user_name like concat('%', #{userName}, '%')
+            </if>
+            <if test="realName != null">
+                and real_name like concat('%', #{realName}, '%')
+            </if>
+            <if test="sex != null">
+                and sex = #{sex}
+            </if>
+            <if test="admissionDate != null">
+                and admission_date like concat('%', #{admissionDate},'%')
+            </if>
+            <if test="className != null">
+                and student_class_id = (select id from dic_class_info where class_name like concat('%',
+                #{className},'%'))
+            </if>
+            <if test="instituteName != null">
+                and institute_id = (select id from dic_institute_info where institute_name like concat('%',
+                #{instituteName},'%'))
+            </if>
+            <if test="majorName != null">
+                and major_id = (select id from dic_major_info where major_name like concat('%', #{majorName},'%'))
+            </if>
+            <if test="teacherId != null">
+                and student_class_id in (
+                    select class_id
+                    from ref_class_teacher
+                    where teacher_user_id = #{teacherId}
+                )
+            </if>
+            and id in (
+            select user_id
+            from ref_user_role
+            where role_id = #{roleId}
+            )
+        </where>
+    </select>
+
+<!--    <select id="listAllTc" resultType="com.demo.qcby.entity.RefTeacherClass">-->
+<!--        select-->
+<!--    </select>-->
+    <!--            select *
+    from sys_user su inner join (
+        select *
+        from dic_class_info dci inner join ref_class_teacher rct on rct.class_id = dci.id
+        where class_name like '%二%'
+    ) as tci on su.id = tci.teacher_user_id
+    where user_name like '%t%' and class_name like '%二%'
+    -->
+<!--    <select id="selectTeacherClass" resultType="java.lang.String">-->
+
+<!--    </select>-->
+    <select id="selectTeacher" resultType="com.demo.qcby.entity.RefTeacherClass">
+        select id, user_name
+        from sys_user
+        <where>
+            id in (
+                select user_id
+                from ref_user_role
+                where role_id = #{teacherId}
+            )
+            <if test="teacherName != null">
+                and user_name like concat('%', #{teacherName}, '%')
+            </if>
+        </where>
+    </select>
+    <select id="selectTeacherClass" resultType="java.lang.String">
+        select class_name
+        from dic_class_info
+        <where>
+            1 = 1
+            <if test="className != null">
+                and class_name like concat('%', #{className}, '%')
+            </if>
+            and id in (
+                select class_id
+                from ref_class_teacher
+                where teacher_user_id = #{id}
+            )
+        </where>
+    </select>
+    <select id="findTeacher" resultType="Long">
+        select user_id
+        from ref_user_role
+        where user_id = #{teacherId} and role_id = #{teacherRoleId}
+    </select>
+    <select id="findStudent" resultType="java.lang.Long">
+        select user_id
+        from ref_user_role
+        where user_id = #{studentId} and role_id = #{studentRoleId}
+    </select>
+</mapper>

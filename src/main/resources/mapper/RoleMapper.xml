@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.demo.qcby.mapper.RoleMapper">
+    <insert id="insertRoleMenu">
+        insert into ref_role_menu
+        values
+        <foreach collection="menuIdList" item="menuId" separator=",">
+        (#{menuId}, #{roleId})
+        </foreach>
+    </insert>
+    <delete id="deleteRole">
+        delete
+        from sys_role
+        <where>
+            id in
+            <foreach collection="idList" item="item" index="index" close=")" separator="," open="(">
+                #{item}
+            </foreach>
+        </where>
+    </delete>
+    <delete id="deleteAllRoleMenu">
+        delete
+        from ref_role_menu
+        where role_id = #{roleId}
+    </delete>
+
+    <select id="listAll" resultType="com.demo.qcby.entity.SysRole">
+        select *
+        from sys_role
+        <where>
+            1 = 1
+            <if test="description != null">
+                and description like concat('%', #{description}, '%')
+            </if>
+            <if test="roleName != null">
+                and role_name like concat('%', #{roleName}, '%')
+            </if>
+        </where>
+    </select>
+</mapper>

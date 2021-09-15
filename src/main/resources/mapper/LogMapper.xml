@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.demo.qcby.mapper.LogMapper">
+    <insert id="insertLoginLog">
+        insert into sys_login_log (user_name, login_time, login_ip)
+        values (#{sysLoginLog.userName}, #{sysLoginLog.loginTime}, #{sysLoginLog.loginIp})
+    </insert>
+
+    <select id="operateLog" resultType="com.demo.qcby.entity.SysOperateLog">
+        select *
+        from sys_operate_log
+        <where>
+            1 = 1
+            <if test="userName != null">
+                and user_name like concat ('%', #{userName}, '%')
+            </if>
+            <if test="operateTime != null">
+                and operate_time like concat('%', #{operateTime}, '%')
+            </if>
+            <if test="operateModel != null">
+                and operate_model like concat('%', #{operateModel}, '%')
+            </if>
+            <if test="operateType != null">
+                and operate_type like concat('%', #{operateType}, '%')
+            </if>
+        </where>
+    </select>
+    <select id="loginLog" resultType="com.demo.qcby.entity.SysLoginLog">
+        select *
+        from sys_login_log
+        <where>
+            1 = 1
+            <if test="userName != null">
+                and user_name like concat('%', #{userName}, '%')
+            </if>
+            <if test="loginIp != null">
+                and login_ip like concat('%', #{loginIp}, '%')
+            </if>
+        </where>
+    </select>
+</mapper>

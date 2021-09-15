@@ -1,0 +1,47 @@
+## 端口号  上下文路径
+server:
+  port: 8080
+
+## 数据源配置
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://8.140.30.255/project_qcby2?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+    username: root
+    password: Thx@0913
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+#    配置发送邮件
+  mail:
+    #smtp服务主机  qq邮箱则为smtp.qq.com
+    host: smtp.qq.com
+    #服务协议
+    protocol: smtp
+    # 编码集
+    default-encoding: UTF-8
+    #发送邮件的账户
+    username: 624592689@qq.com
+    #授权码
+    password: rhgwnspiyzvhbdji
+    test-connection: true
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+# mybatis-plus配置
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+  typeAliasesPackage: com.demo.qcby.entity #对应实体类
+  mapperLocations: classpath:mapper/*.xml #xml 文件
+
+file:
+  path:
+    upload: C:/Users/62459/Desktop/
+    prefix: /filePrefix/

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.demo.qcby.mapper.LeaveMapper">
+
+    <select id="listAllLeaveMsg" resultType="com.demo.qcby.entity.StudentLeave">
+        select *
+        from student_leave
+        <where>
+            1 = 1
+            <if test="studentName != null">
+                and student_user_id in (
+                select id
+                from sys_user
+                where user_name like concat('%', #{approveUserName}, '%')
+                )
+            </if>
+            <if test="studentClassName != null">
+                and student_user_id in (
+                select id
+                from sys_user
+                where student_class_id in (
+                    select id
+                    from dic_class_info
+                    where class_name like concat('%', #{studentClassName}, '%')
+                )
+                )
+            </if>
+            <if test="approveUserName != null">
+                and approve_user_id in (
+                select id
+                from sys_user
+                where user_name like concat('%', #{approveUserName}, '%')
+                )
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="startTime != null and endTime != null">
+                and start_time between #{startTime} and #{endTime} and end_time between #{startTime} and #{endTime}
+            </if>
+            <if test="reason != null">
+                and reason like concat('%', #{reason}, '%')
+            </if>
+            <if test="noApprovalReason != null">
+                and no_approval_reason like concat('%', #{noApprovalReason}, '%')
+            </if>
+            <if test="studentId != null">
+                and student_user_id = #{studentId}
+            </if>
+        </where>
+    </select>
+</mapper>
